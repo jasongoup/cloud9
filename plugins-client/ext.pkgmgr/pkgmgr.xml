@@ -1,0 +1,699 @@
+
+<a:application xmlns:a="http://ajax.org/2005/aml">
+
+
+    <a:window id="mnuPkgMgr"
+      icon      = ""
+      center    = "true"
+      resizable = "false"
+      buttons   = "close"
+      modal     = "false"
+      skin      = "bk-win-noisebg"
+      left       =  "300"
+      width     = "800"
+      height    = "500"
+      kbclose   = "true"
+      draggable = "true"
+
+			>
+
+<!--
+<a:bar id="mnuPkgMgr" skin = "basic"  class="showList"  focussable="container" zindex="1000" minheight="0" visible="false"   height="500"  width = "800"  left = "300" >
+
+<a:bar id="mnuPkgMgr" skin="mnuPkgMgr" skinset="searchreplace"  class="showList"  focussable="container" zindex="1000" minheight="0" visible="false"   height="500"  width = "800"  left = "400" >
+-->
+        <div id="win" class="window">
+            <div class="tooltip"></div>
+            <div height="100%">
+                <a:vbox>
+                    <div class="fbox">
+                                <div class="col col1">
+                                    <div class="title">
+                                        <a:button id="btnAddPackage"
+                                                  onclick="require('ext/pkgmgr/pkgmgr').addPackage()"
+                                                  skin="addnew_btn"
+                                                  caption="Add Package"
+                                                  icon="plus2.png"/>
+                                    </div>
+                                    <a:bar  anchors ="28 0 0 0" flex="1" scrollbar="sbShared 2 2 2">
+
+                                    <!--div class="black" edge="28 0 0 0"-->
+                                        <a:list id="lstPackage" archors="0 0 0 0"
+                                                border="0"
+                                                flex="0"
+                                                skin="pkglist"
+                                                skinset="pkgmgr"
+                                                class="openfile rundebug"
+                                                autoselect="false"
+                                                canrename="true" scrollbar="sbShared 2 2 2"
+                                                model = "{ddProjectSelector.selected}"
+                                                >
+                                            <a:each match="[./package]">
+                                                <a:css match="[@active]" value="active"/>
+                                                <a:caption match="[@name]"/>
+                                                <a:tooltip match="[@type]"/>
+                                            </a:each>
+                                        </a:list>
+                                    <!--/div-->
+                                    </a:bar>
+                                </div>
+                                <div class="col col2">
+                                    <div class="title">
+                                        <a:hbox height="28" align="center" edge="2 2 0 7">
+                                            <!--a:checkbox id="cbPkgMgrShowPkgs" label="Show Packages" skin="checkbox_black" class="dark-bg"
+                                                        value="[{require('ext/settings/settings').model}::auto/configurations/@showpkglist]"
+                                                        onclick="apf.setStyleClass(mnuPkgMgr.$ext, (this.checked ? 'showList' : ''), [(this.checked ? '' : 'showList')])"/-->
+                                            <a:filler/>
+                                            <a:button skin="btn_icon_only" class="dim18-18" icon="info.png"
+                                                      onclick="require('ext/pkgmgr/pkgmgr').onHelpClick()"/>
+                                        </a:hbox>
+                                    </div>
+                                    <div class="gray">
+                                        <a:bar skin="basic" id='rightpanel'>
+                                            <a:vbox edge="5 2 5 5" validgroup="vgPkgMgr">
+                                                <a:hbox height="28" align="center">
+                                                    <a:label width="93" class="graylabel size-12 arial dark-bg">Package:</a:label>
+                                                    <a:textbox id="txtPkgName" skin="searchbox_textbox" class="dark-bg" flex="1"
+                                                               value="[{lstPackage.selected}::@name]" required="true"
+                                                               invalidmsg="Please enter package name"/>
+                                                </a:hbox>
+                                                <a:hbox height="28" align="center">
+                                                    <a:label width="93" class="graylabel size-12 arial dark-bg">Type:</a:label>
+                                                    <a:model id="mdlPkgTypes" src="/static/ext/pkgmgr/pkgtypes.xml"/>
+                                                    <a:dropdown id="ddPkgTypeSelector" flex="1" model="mdlPkgTypes"
+                                                                skin="dropdown-dark-glossy"
+                                                                class="single-arrow"
+                                                            >
+                                                        <a:each match="[element]">
+                                                            <a:caption match="[@caption]"/>
+                                                            <a:value match="[@value]"/>
+                                                        </a:each>
+                                                    </a:dropdown>
+                                                </a:hbox>
+                                            </a:vbox>
+                                            <a:vbox archors="0 0 0 0">
+                                                <a:tab id="mytab"  skin = "tab_console"  height="300" width = "600"  render2="runtime" buttons="scale,order" >
+                                                    <a:page class="mypage gray" caption="General" >
+                                                        <a:vbox edge="20 10 2 10" padding="5">
+                                                            <!-- a:hbox height="28" align="center" >
+                                                                <a:label width="93" class="graylabel size-12 arial dark-bg">Version:</a:label>
+                                                                <a:textbox id="txtPkgVersion" skin="searchbox_textbox" class="dark-bg" flex="1" value="[{lstPackage.selected}::@pkgver]" initial-message="0.1.0"/>
+                                                            </a:hbox -->
+                                                            <a:hbox height="28">
+                                                                <a:label width="85" class="graylabel size-12 arial dark-bg">Depends:</a:label>
+                                                                <a:textbox id="txtPkgDepends" skin="searchbox_textbox"
+                                                                           class="dark-bg" flex="1"
+                                                                           value="[{lstPackage.selected}::@depends]"
+                                                                           initial-message=""
+                                                                        />
+                                                            </a:hbox>
+                                                            <a:hbox height="28">
+                                                                <a:label width="85" class="graylabel size-12 arial dark-bg">Architecture:</a:label>
+
+								           <a:model id="mdlPkgArchTypes"  src="/static/ext/pkgmgr/archtypes.xml"/>
+                                                    <a:dropdown id="ddPkgArchTypeSelector" flex="1" model="mdlPkgArchTypes"
+                                                                skin="dropdown-dark-glossy"
+                                                                class="single-arrow"
+                                                            >
+                                                        <a:each match="[element]">
+                                                            <a:caption match="[@caption]"/>
+                                                            <a:value match="[@value]"/>
+                                                        </a:each>
+                                                    </a:dropdown>
+
+
+                                                               <!--
+                                                                <a:textbox class="dark-bg" flex="1" value="[{lstPackage.selected}::@arch]"/>-->
+                                                            </a:hbox>
+                                                            <a:hbox height="28">
+                                                                <a:label width="85" class="graylabel size-12 arial dark-bg">Section:</a:label>
+                                                                <a:textbox class="dark-bg" flex="1" value="[{lstPackage.selected}::@section]"/>
+                                                            </a:hbox>
+                                                            <a:hbox height="28">
+                                                                <a:label width="85" class="graylabel size-12 arial dark-bg">Priority:</a:label>
+
+								  
+                                                   
+                                                   <a:model id="mdlPkgPriorityTypes"  src="/static/ext/pkgmgr/pkgprioritytypes.xml"/>
+                                                    <a:dropdown id="ddPkgfPriorityTypeSelector" flex="1" model="mdlPkgPriorityTypes"
+                                                                skin="dropdown-dark-glossy"
+                                                                class="single-arrow"
+                                                            >
+                                                        <a:each match="[element]">
+                                                            <a:caption match="[@caption]"/>
+                                                            <a:value match="[@value]"/>
+                                                        </a:each>
+                                                    </a:dropdown>
+                                               
+					<!--
+                                                                <a:textbox class="dark-bg" flex="1" value="[{lstPackage.selected}::@prio]"/>
+					-->
+                                                            </a:hbox>
+                                                            <a:hbox height="28">
+                                                                <a:label width="85" class="graylabel size-12 arial dark-bg">Description:</a:label>
+                                                                <a:textbox  class="dark-bg" flex="1" value="[{lstPackage.selected}::@desc]"/>
+                                                            </a:hbox>
+                                                        </a:vbox>
+                                                    </a:page>
+
+                                                    <a:page id="servicePage" class="mypage gray" caption="Service">
+                                                        <div class="gray">
+                                                            <a:vbox id="vbService" edge="20 10 2 10"    validgroup="vgService" height="180" visible="false">
+                                                                <a:hbox height="28" align="center">
+                                                                    <a:label width="93" class="graylabel size-12 arial dark-bg">Service
+                                                                        Name:
+                                                                    </a:label>
+                                                                    <a:textbox skin="searchbox_textbox" class="dark-bg" flex="1"
+                                                                               value="[{lstPackage.selected}::service/@name]"/>
+                                                                </a:hbox>
+                                                                <a:hbox height="28" align="center">
+                                                                    <a:label width="93" class="graylabel size-12 arial dark-bg">
+                                                                        Executable:
+                                                                    </a:label>
+                                                                    <a:textbox skin="searchbox_textbox" class="dark-bg" flex="1"
+                                                                               value="[{lstPackage.selected}::service/@exec]"/>
+                                                                </a:hbox>
+                                                                <a:hbox height="28" align="center">
+                                                                    <a:label width="93" class="graylabel size-12 arial dark-bg">
+                                                                        Parameters:
+                                                                    </a:label>
+                                                                    <a:textbox skin="searchbox_textbox" class="dark-bg" flex="1"
+                                                                               value="[{lstPackage.selected}::service/@params]"/>
+                                                                </a:hbox>
+                                                                <a:hbox height="28" align="center">
+                                                                    <a:label width="93" class="graylabel size-12 arial dark-bg">
+                                                                        oneshot:
+                                                                    </a:label>
+                                                                    <a:checkbox label="Oneshot" skin="checkbox_black" class="dark-bg"
+                                                                                value="[{lstPackage.selected}::service/@oneshot]"/>
+                                                                </a:hbox>
+                                                                <a:hbox height="28" align="center">
+                                                                    <a:label width="93" class="graylabel size-12 arial dark-bg">After:
+                                                                    </a:label>
+                                                                    <a:textbox skin="searchbox_textbox" class="dark-bg" flex="1"
+                                                                               value="[{lstPackage.selected}::service/@after]"/>
+                                                                </a:hbox>
+                                                            </a:vbox>
+                                                        </div>
+                                                    </a:page>
+                                                    
+													<a:page id="filepage22" class="mypage gray" width="100%"
+                                                            tooltip="Files in package" caption="Files">
+                                                        <!--<a:tab id="pkgattr_tab" class="filestab gray"     width="100%" > -->
+
+                                                                  <!--  <div height="100%" flex="1" top="0" bottom="0" left="0"> -->
+<a:hbox class="filesframe"  id="hbFileList1"    width="100%" height="100%">
+<a:vbox class="gray" width="400px" edge="10 0 0 5" align="right"  padding="50">
+																			
+
+                                                                        <a:list id="lstFilesV1"
+                                                                                border="1"
+                                                                                height="100%" width="100%"
+																				flex="1"                         
+                                                                                autoselect="false"
+                                                                                canrename="true"
+                                                                                scrollbar="sbShared 1 2 0">
+																				  
+
+                                                                   <a:each match='[file]'>
+                                                                        <a:caption match="[@src]"/>
+                                                                        <a:tooltip value="Dest:[@dest]\nMode:[@mode]\nOwner:[@owner]:[@group]"/>
+                                                                    </a:each>
+                                                                    </a:list>
+								   							</a:vbox>
+
+                                                                   <!-- </div>-->
+                                                            <a:vbox class="gray" edge="50 0 0 5" align="right"
+                                                                            padding="5">
+                                                                        <a:button skin="button-colorless"
+                                                                                  id="btnAddF" width = "80" caption="Add" onclick="winPgAddFileTab.set(winPgAddFilePage);winPgAddFile.show();"/>
+                                                                        <a:button skin = "button-colorless"
+                                                                                    id = "btnRemoveF" 
+																			     width = "80" 
+																			   caption = "Remove" 
+																			  disabled = "true" />
+																			  
+																			  
+                                                                        <a:button skin = "button-colorless" 
+                                                                                    id = "btnChangeF" 
+																				 width = "80" 
+																			   caption = "Modify" 
+																			   onclick = "if (lstFilesV1.selected) winPgAddFileTab.set(winPgModifyFilePage);winPgAddFile.show();" 
+																			  disabled="true"/>
+                                                           </a:vbox>
+
+</a:hbox>
+                                                    </a:page>
+													
+                                                    <a:page class="mypage"  caption="preinst">
+								
+                                                        
+                                                            <a:textarea width="100%" top="0" bottom="0" value='[{lstPackage.selected}::@preinst]'>
+                                                            </a:textarea>
+						
+								
+                                                    </a:page>
+                                                    <a:page class="mypage" skin="" caption="postinst" >
+                                                        <div>
+                                                            <a:textarea width="100%" top="0" bottom="0" value='[{lstPackage.selected}::@postinst]'>
+                                                            </a:textarea>
+                                                        </div>
+                                                    </a:page>
+                                                    <a:page class="mypage" skin="" caption="prerm">
+                                                        <div>
+                                                            <a:textarea width="100%" top="0" bottom="0" value='[{lstPackage.selected}::@prerm]'>
+                                                            </a:textarea>
+                                                        </div>
+                                                    </a:page>
+                                                    <a:page class="mypage" skin="" caption="postrm">
+                                                        <div>
+                                                            <a:textarea width="100%" top="0" bottom="0" value='[{lstPackage.selected}::@postrm]'>
+                                                            </a:textarea>
+                                                        </div>
+                                                    </a:page>
+                                                </a:tab>
+                                                <a:hbox class="gray" height = "30" edge="30 5 0 0" pack="end" align="center" padding="100">
+                                                    <a:button skin="button-colorless"   class="green dark"  caption="Cancel" width="100" 
+                                                              onclick="mnuPkgMgr.hide()"/>
+                                                    <a:button id="btnPkgBuild" caption="Pack" width="100" skin="button-colorless"
+                                                              class="green dark" onclick="require('ext/pkgmgr/pkgmgr').onBuild ();"/>
+                                                    <!--a:button id="btnPkgInstall" caption="Install" width="170" skin="button-colorless"
+                                                              class="green dark"/-->
+                                                </a:hbox>
+                                            </a:vbox>
+                                        </a:bar>
+
+                                    </div>
+                                    <div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                </a:vbox>
+            </div>
+        </div>
+</a:window>
+<!--</a:bar> -->
+
+    <a:window
+            id        = "opkDialog"
+            title     = "Opkg Installer"
+            icon      = ""
+            center    = "true"
+	    left      =  "500"
+            width     = "500"
+            height    = "400"
+            resizable = "false"
+            kbclose   = "true"
+            buttons   = "close"
+            draggable = "true">
+	 <a:vbox anchors="0 0 0 0" edge="0 0 11 0">
+	<a:tab flex="1" id="tabPkgmgr" skin="extensions_tab">
+        <a:page caption="IP Configure">
+	<!--
+        <div height="100%">
+            <div>
+                <a:hbox padding="2" edge="1 4 1 4">
+	-->
+		    <a:vbox anchors="20 10 10 10">
+		     	<a:hbox height = "28" align="center" edge="0 0 5 0" padding="5">     
+                    		<a:label width = "85" class="graylabel size-12 arial dark-bg" >PIA Address:</a:label>
+                   		<a:textbox id="txtPiaAddr" flex="1"></a:textbox>
+		     	</a:hbox>
+		
+		       	<a:hbox heidth= "28" align="center" edge="20 0 5 0" padding="5">	
+                   		<a:label   width = "85" class="graylabel size-12 arial dark-bg" >URL:</a:label>
+                    		<a:textbox id="txtUrl"  flex="1"></a:textbox>
+			 </a:hbox>
+			
+               	    </a:vbox>
+
+		
+
+	  </a:page>
+	  <a:page  id = "piapage"  caption="PIA List Packages" visible="false">
+                    <a:vbox anchors="10 10 10 10">
+
+			 <a:hbox align="center" edge="0 0 5 0" padding="5">	
+			 <a:datagrid id="lstPkg1"
+				height = "200"
+                                border="1"
+                                flex="1"
+                                skin="filelist"
+                                class="openfile rundebug"
+                                autoselect="false"
+                                canrename="false"
+                                scrollbar="sbShared 1 2 0"
+                                >
+                            <!--<div><span>title</span><span>version</span></div>-->
+							<a:each match='[package]'>
+						
+                                <a:column width="50%" value="[@name]" caption="Package name" />
+				<a:column width="50%" value="[@ver]"  caption="Version" />
+			<!--	<a:column width="33%" value="[@curver]" caption="CurrentVersion" />  -->
+                            </a:each>
+							
+                        </a:datagrid>
+		    
+		     </a:hbox>
+
+
+				
+                       
+			<!--
+			  <a:hbox height="28">
+                        <a:label  width = "80">Package: </a:label>
+                        <a:textbox disabled="true" flex="1" value="[{lstPkg1.selected}::@name]"/>
+			</a:hbox>
+			  <a:hbox height="28">
+                        <a:label  width = "80">Latest:</a:label>
+                        <a:textbox disabled="true" flex="1" value="[{lstPkg1.selected}::@ver]"/>
+			   </a:hbox>
+			  <a:hbox height="28">
+                        <a:label  width = "80">Installed:</a:label>
+                        <a:textbox disabled="true" flex="1" value="[{lstPkg1.selected}::@curver]"/>
+			 </a:hbox>
+			-->
+		    </a:vbox>
+
+	  </a:page>	
+	
+	    <a:page caption="Cloud List Packages">
+                    <a:vbox anchors="10 10 10 10">
+
+                         <a:hbox align="center" edge="0 0 5 0" padding="5">
+                         <a:datagrid id="lstPkg2"
+                                height = "200"
+                                border="1"
+                                flex="1"
+                                skin="filelist"
+                                class="openfile rundebug"
+                                autoselect="false"
+                                canrename="false"
+                                scrollbar="sbShared 1 2 0"
+                                >
+                                 <a:each match='[package]'>
+
+                                <a:column width="33%" value="[@name]" caption="Package Name" />
+                                <a:column width="33%" value="[@ver]"  caption="Version" />
+				<a:column width="33%" value="[@curver]"  caption="Install Status" />
+                              
+                            </a:each>
+
+
+                        </a:datagrid>
+			</a:hbox>
+
+                    </a:vbox>
+
+
+
+
+
+          </a:page>
+
+	
+
+
+
+
+
+
+
+
+	 </a:tab>
+
+		   <a:hbox edge="11 10 0 0" pack="end"  visible="{tabPkgmgr.activepage == 2}" >
+			
+
+			 <a:button
+				id       = "btnPkgInstall1"
+				class    = " green dark"
+				target	 ="lstPkg1"
+                  		skin     = "btn-default-css3"
+                  		caption  = "Install"
+                 		margin   = "0 10 0 0"
+               		 />
+
+		<!--	
+                         <a:button
+                                id       = "btnFresh"
+				class    = " green dark"
+				target   =  "lstPkg1"
+                                skin     = "btn-default-css3"
+                                caption  = "btnfresh"
+                                margin   = "0 10 0 0"
+				onclick  = "require('ext/pkgmgr/pkgmgr').onfresh()"
+                         />
+		-->        
+	
+		     </a:hbox>
+
+<!--		
+		       <a:hbox edge="11 10 0 0" pack="end"  visible="{tabPkgmgr.activepage == 1}" >
+
+
+                         <a:button
+                                id       = "btnPkgUninstall2"
+                                class    = " green dark"
+                                target   =  "lstPkg2"
+                                skin     = "btn-default-css3"
+                                caption  = "Uninstall"
+                                margin   = "0 10 0 0"
+                         />
+
+			
+			
+
+
+
+                     </a:hbox>
+		
+-->
+		 <a:hbox edge="11 10 0 0" pack="end"  visible="{tabPkgmgr.activepage == 0}" >
+
+
+                         <a:button
+                                id       = "btnAttachPIA"
+                                class    = " green dark"
+                                skin     = "btn-default-css3"
+                                caption  = "Attach"
+                                margin   = "0 10 0 0"
+                         />
+
+			<!--
+                         <a:button
+                                id       = "btnBrowsePIA"
+                                class    = " green dark"
+                                skin     = "btn-default-css3"
+                                caption  = "Browse"
+                                margin   = "0 10 0 0"
+                         />
+			-->
+
+                     </a:hbox>
+					 
+				<a:hbox edge="80 10 0 0" pack="end"  visible="{tabPkgmgr.activepage == 'piapage'}" >
+                         <a:button
+                                id       = "btnPkgUninstall2"
+                                class    = " green dark"
+                                target   =  "lstPkg2"
+                                skin     = "btn-default-css3"
+                                caption  = "Uninstall"
+                                margin   = "0 10 0 0"
+                         />
+                     </a:hbox>
+
+
+
+	  </a:vbox>
+    </a:window>
+
+    <a:window id="winOpkgProject"
+              flex     = "1"
+              skin     = "fm-window"
+              title    = "Opkg Project Settings"
+              modal    = "false"
+              buttons  = "close"
+              minwidth = "240"
+              optimize = "true">
+
+        <a:button
+                skin="header-btn"
+                class="panel-settings"
+                submenu="mnuOpkgProjSettings"
+                />
+<!--
+        <a:button
+                skin="header-btn"
+                class="panel-settings"
+                right="32"
+                submenu="mnuOpkgProjSettings"
+                />
+-->
+        <!--a:button skin="header-btn" icon="order.png" top="-22" right="7"></a:button-->
+
+        <a:menu id="mnuOpkgProjSettings">
+            <a:item onclick="require('ext/pkgmgr/pkgmgr').onBuild()">Pack</a:item>
+            <a:item onclick="require('ext/pkgmgr/pkgmgr').showMnuPkgMgrDlg()">Packages ...</a:item>
+            <a:divider />
+            <!--<a:item submenu="mnuPkgMgr" submenudir="left">Packages</a:item> -->
+
+        </a:menu>
+
+        <a:vsplitbox id="vboxOPSContainer" archors="0 2 0 2" minheight="1">
+            <a:vbox edge="0 4">
+                <a:hbox padding="2">
+                    <a:label>Projects:</a:label>
+                    <a:dropdown id="ddProjectSelector" flex="1"
+                                model="{require('ext/pkgmgr/pkgmgr').model}"
+                                class="single-arrow" minwidth="80" edge="0 5">
+                        <a:each match="[project]">
+                            <a:caption match="[@name]"/>
+                            <a:value match="[@name]"/>
+                        </a:each>
+                    </a:dropdown>
+                </a:hbox>
+	      
+                <a:hbox pack="end" padding="2">
+                    <a:button id="btnAddProject"
+                              skin="addnew_btn"
+                              caption="Add"
+                              icon="plus2.png"
+                              />
+                    <a:button id="btnRemoveProject"
+                              skin="delete_btn"
+                              caption="Remove"
+                              icon="delete_icon.png"/>
+                </a:hbox>
+	   
+                <a:divider id="divider_line" edge="2 0"></a:divider>
+                <a:table id="projecttable" class="gray"
+                         columns = "65, *">
+                    <a:label id ="lbproject" >Project:</a:label>
+                    <a:textbox id = "txtProject" value="[{ddProjectSelector.selected}::@name]"
+							required   = "true"
+							invalidmsg = "Please enter project name!"
+					/>
+                    <a:label id="lbver">Version:</a:label>
+                    <a:textbox id = "txtver" value="[{ddProjectSelector.selected}::@ver]"/>
+                    <a:label id="lbmaintainer" >Maintainer:</a:label>
+                    <a:textbox value="[{ddProjectSelector.selected}::@maintainer]"/>
+
+                    <a:label id ="lbhomepage">Homepage:</a:label>
+                    <a:textbox id = "txthomepage" value="[{ddProjectSelector.selected}::@homepage]"/>
+                    <a:label id = "lbdescription" width="80" class="">Description:</a:label>
+                    <a:textbox id = "txtdescription" flex="1" value="[{ddProjectSelector.selected}::@desc]"/>
+                </a:table>
+                <a:divider edge="2 0 2 0"/>
+
+                <a:label id ="lboutput">Project's Output Directory:</a:label>
+                <a:textbox id = "txtdirectory" flex="1" tooltip="Directory where files were installed into" value="[{ddProjectSelector.selected}::@destdir]"></a:textbox>
+
+            </a:vbox>
+        </a:vsplitbox>
+    </a:window>
+
+
+	<a:window id="winPgAddFile"
+      center    = "true"
+      resizable = "false"
+      buttons   = "close"
+      modal     = "false"
+      left       =  "600"
+      width     = "400"
+      height    = "300"
+	  top = "200"
+      kbclose   = "true"
+	  skin      = "bk-win-noisebg"
+	  caption = "Add File"
+      draggable = "true" >
+		
+		<a:tab id="winPgAddFileTab" height="300" skin="tab_pkginfo_m">
+		<a:page id="winPgAddFilePage" caption="Add">	
+			<a:vbox edge="20 10 2 10" padding="5">
+			
+				<a:hbox height="28">				
+					<a:label width="85"  class="graylabel size-12 arial dark-bg">Source file</a:label>
+					<a:textbox id="tbSource"  skin="searchbox_textbox"
+					class="dark-bg" flex="1"/>
+				</a:hbox>
+				
+				<a:hbox height="28">
+				<a:label width="85" class="graylabel size-12 arial dark-bg">Destination:</a:label>
+				<a:textbox id="tbDest" skin="searchbox_textbox"
+				class="dark-bg" flex="1"/>
+				</a:hbox>
+				<a:hbox height="28">
+				<a:label width="85" class="graylabel size-12 arial dark-bg">Mode:</a:label>
+				<a:textbox id="tbMode"  skin="searchbox_textbox"
+				class="dark-bg" flex="1"/>
+				</a:hbox>
+				<a:hbox height="28">
+				<a:label width="85" class="graylabel size-12 arial dark-bg">Owner:</a:label>
+				<a:textbox id="tbOwner" skin="searchbox_textbox"
+				class="dark-bg" flex="1"/>
+				</a:hbox>
+				<a:hbox height="28">
+				<a:label width="85" class="graylabel size-12 arial dark-bg">Group:</a:label>
+				<a:textbox  id="tbGroup" skin="searchbox_textbox"
+				class="dark-bg" flex="1"/>
+				</a:hbox>
+						
+				<a:hbox height= "28"  align="center" edge="0 0 5 0" padding="20" >
+					<a:button caption="Add"  width = "80" skin="button-colorless" onclick="require('ext/pkgmgr/pkgmgr').addFileToPkg ()"/>
+				</a:hbox>
+			</a:vbox>
+		</a:page>
+		<a:page id="winPgModifyFilePage" caption="Modify">	
+			<a:vbox edge="20 10 2 10" padding="5">
+			
+				<a:hbox height="28">
+				
+					<a:label width="85" class="graylabel size-12 arial dark-bg">Source file</a:label>
+					<a:textbox   id="tbSource1"  skin="searchbox_textbox"
+					class="dark-bg" flex="1"
+					value="[{lstFilesV1.selected}::@src]"/>
+				</a:hbox>
+				<a:hbox height="28">
+				
+				<a:label width="85" class="graylabel size-12 arial dark-bg">Destination:</a:label>
+				<a:textbox  skin="searchbox_textbox"
+				class="dark-bg" flex="1"
+
+				value="[{lstFilesV1.selected}::@dest]"
+				/>
+				</a:hbox>
+				<a:hbox height="28">
+				<a:label width="85" class="graylabel size-12 arial dark-bg">Mode:</a:label>
+				<a:textbox  skin="searchbox_textbox"
+				class="dark-bg" flex="1"
+				value="[{lstFilesV1.selected}::@mode]"
+				/>
+				</a:hbox>
+				<a:hbox height="28">
+				<a:label width="85" class="graylabel size-12 arial dark-bg">Owner:</a:label>
+				<a:textbox  skin="searchbox_textbox"
+				class="dark-bg" flex="1"
+				value="[{lstFilesV1.selected}::@owner]"
+				/>
+				</a:hbox>
+				<a:hbox height="28">
+				<a:label width="85" class="graylabel size-12 arial dark-bg">Group:</a:label>
+				<a:textbox  skin="searchbox_textbox"
+				class="dark-bg" flex="1"
+				value="[{lstFilesV1.selected}::@group]"
+				/>
+				</a:hbox>
+						
+				<a:hbox height= "28"  align="center" edge="0 0 5 0" padding="20" >
+					<a:button caption="Modfiy"  width = "80" skin="button-colorless"  onclick="winPgAddFile.hide(); lstFilesV1.reload(); "/>
+				</a:hbox>
+			</a:vbox>
+		</a:page>
+		</a:tab>
+		
+	</a:window>
+</a:application>

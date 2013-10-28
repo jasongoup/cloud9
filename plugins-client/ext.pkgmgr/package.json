@@ -1,0 +1,14 @@
+{
+    "name": "ext.pkgmgr",
+    "version": "0.1.0",
+    "main": "pkgmgr-ext.js",
+    "private": true,
+    "plugin": {
+        "provides": [
+            "ext.pkgmgr"
+        ],
+        "consumes": [
+            "client-plugins"
+        ]
+    }
+}

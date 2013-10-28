@@ -1,0 +1,21 @@
+{
+    "name": "cloud9.ide.npm",
+    "version": "0.0.1",
+
+    "main": "./pkgmgr-plugin.js",
+    "private": true,
+
+    "dependencies": {
+        "xmldom": "~0.1.16"
+    },
+
+    "plugin": {
+        "consumes": [
+            "ide",
+            "vfs",
+            "process-manager",
+            "eventbus",
+            "sandbox"
+        ]
+    }
+}
