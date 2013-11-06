@@ -1,0 +1,12 @@
+{
+    "name": "cloud9.ide.test",
+    "version": "0.0.1",
+
+    "main": "./test.js",
+
+    "plugin": {
+        "consumes": [
+            "ide"
+        ]
+    }
+}

@@ -1,0 +1,9 @@
+<a:application xmlns:a="http://ajax.org/2005/aml">
+    <a:label>PIA Address:</a:label>
+    <a:textbox flex="1" margin="0 2 0 2"></a:textbox>
+
+    <a:hbox pack="end" edge="0 2 0 0">
+        <a:label flex="1">Status:</a:label>
+        <a:button>Connect</a:button>
+    </a:hbox>
+</a:application>
