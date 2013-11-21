@@ -1,2 +1,0 @@
-./plugins-client/ext.console/logger_test.js
-./plugins-server/cloud9.ide.search/search_test.js
